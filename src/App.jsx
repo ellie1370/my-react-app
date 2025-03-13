@@ -1,62 +1,56 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./Components/navbar";
-import About from "./Components/About";
-import ProfileForm from "./Components/ProfileForm";
-import { useState } from "react";
-import Wrapper from "./Components/wrapper";
+import "./App.css";
+import AboutPage from "./pages/AboutPage";
+import Navbar from "./Components/navbar"; // Fix path
+import AddProfile from "./pages/AddProfile"; // Add this import
+import HomePage from "./pages/HomePage";
+import NotFound from "./pages/NotFound";
+import ProfileDetail from "./pages/ProfileDetail";
+import ProfileEdit from "./pages/ProfileEdit";
+import ProfileIndex from "./pages/ProfileIndex";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage"; 
+import { HashRouter, Routes, Route } from "react-router-dom";
+import { useContext } from "react";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+import ModeContext from "./contexts/ModeContext.jsx";
 
 
-import Card from "./Components/Card";
 
+const App = () => {
+    const { mode, handleModeChange } = useContext(ModeContext); // Use both mode and handleModeChange
 
-function App() {
-  const [mode, setMode] = useState("light");
-  const [profiles, setProfiles] = useState(mockProfiles);
-
-  const updateMode = () => {
-    setMode(mode === "light" ? "dark" : "light");
-  };
-
-  const addProfile = (newProfile) => {
-    setProfiles([...profiles, newProfile]);
-  };
-
-  return (
-    <Router>
-      <main className={mode === "dark" ? "dark" : ""}>
-        <Navbar mode={mode} updateMode={updateMode} />
-        <Wrapper>
-          <Routes>
-            <Route path="/" element={<Home profiles={profiles} />} />
-            <Route path="/about" element={<About />} />
-            <Route
-              path="/add-profile"
-              element={<ProfileForm addProfile={addProfile} />}
-            />
-          </Routes>
-        </Wrapper>
-      </main>
-    </Router>
-  );
-}
-
-const Home = ({ profiles }) => {
-  return (
-    <div>
-      <h1>Job Application - Profile List</h1>
-      <div className="profile-list">
-        {profiles.map((profile, index) => (
-          <Card
-            key={index}
-            name={profile.name}
-            title={profile.title}
-            email={profile.email}
-            image_url={profile.image_url}
-          />
-        ))}
-      </div>
-    </div>
-  );
+    return (
+        <AuthProvider>
+            <HashRouter>
+                <header>
+                    <Navbar mode={mode} updateMode={handleModeChange} /> {/* Pass props */}
+                </header>
+                <main className={mode === "light" ? "light" : "dark"}>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/add-profile" element={
+                            <ProtectedRoute>
+                                <AddProfile/>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/profile/:id" element={<ProfileIndex />}>
+                            <Route index element={<ProfileDetail />} />
+                            <Route path="edit" element={
+                                <ProtectedRoute>
+                                    <ProfileEdit />
+                                </ProtectedRoute>
+                            } />
+                        </Route>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </main>
+            </HashRouter>
+        </AuthProvider>
+    );
 };
 
 export default App;

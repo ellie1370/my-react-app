@@ -33,7 +33,7 @@ const ProfileForm = () => {
     if (data.image) formData.append("image", data.image);
     console.log(data.image+"test");
     try{
-        const response = await fetch("https://web.ics.purdue.edu/~park1843/new-project/create-sendata.php", {
+        const response = await fetch("https://web.ics.purdue.edu/~park1843/my-react-app/create-sendata.php", {
             method: "POST",
             body: formData,
         });

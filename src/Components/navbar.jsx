@@ -1,7 +1,7 @@
 import styles from "../styles/navbar.module.css";
 import { Link } from "react-router-dom";
 
-const navbar = ({ mode, updateMode }) => {
+const Navbar = ({ mode, updateMode }) => {
   return (
     <nav className={`${styles["navbar"]}`}>
       <ul>
@@ -22,4 +22,4 @@ const navbar = ({ mode, updateMode }) => {
   );
 };
 
-export default navbar;
+export default Navbar;
